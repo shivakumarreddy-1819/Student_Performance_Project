@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Performance Analysis Dashboard</title>
+
+    <style>
+
+        /* =========================================
+           GLOBAL
+        ========================================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 35px 20px;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            color: white;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #d5dbea;
+            font-size: 16px;
+        }
+
+
+        /* =========================================
+           NAVIGATION
+        ========================================= */
+
+        .navigation {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.20);
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================
+           GENERAL CARDS
+        ========================================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            padding: 22px;
+            text-align: center;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            color: #cbd3e1;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .card .value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+
+        /* =========================================
+           SECTIONS
+        ========================================= */
+
+        .section {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+
+        /* =========================================
+           TABLES
+        ========================================= */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        th {
+            background: rgba(79, 172, 254, 0.18);
+        }
+
+        td {
+            color: #e5eaf2;
+        }
+
+
+        /* =========================================
+           TWO COLUMN
+        ========================================= */
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+
+        /* =========================================
+           ANALYSIS CARDS
+        ========================================= */
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .analysis-card {
+            background: rgba(0, 0, 0, 0.20);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .analysis-card h3 {
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+
+        .analysis-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 8px;
+        }
+
+        .analysis-card p {
+            color: #cbd3e1;
+            font-size: 13px;
+        }
+
+        .sub-analysis-title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+
+        /* =========================================
+           PROBABILITY BOX
+        ========================================= */
+
+        .probability-box {
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.20);
+            margin-bottom: 12px;
+        }
+
+        .probability-box strong {
+            color: #4facfe;
+        }
+
+        .probability-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .probability-row:last-child {
+            border-bottom: none;
+        }
+
+        .probability-row span {
+            color: #4facfe;
+            font-weight: bold;
+        }
+
+
+        /* =========================================
+           CORRELATION TABLE
+        ========================================= */
+
+        .correlation-table {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.20);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+            text-align: center;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-header {
+            font-weight: bold;
+            background: rgba(79, 172, 254, 0.15);
+        }
+
+
+        /* =========================================
+           REGRESSION
+        ========================================= */
+
+        .regression-box {
+            background: rgba(0, 0, 0, 0.20);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .regression-equation {
+            font-size: 19px;
+            font-weight: bold;
+            color: #ffffff;
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
+
+        .regression-description {
+            color: #cbd3e1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           GRAPHS
+        ========================================= */
+
+        .graphs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .graph {
+            background: rgba(0, 0, 0, 0.20);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .graph img {
+            display: block;
+            width: 100%;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .graph h3 {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 17px;
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #cbd3e1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           RESPONSIVE DESIGN
+        ========================================= */
+
+        @media (max-width: 900px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analysis-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .two-column,
+            .graphs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 20px 10px;
+            }
+
+            .container {
+                width: 100%;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .probability-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <div class="header">
+
+        <h1>📊 Student Performance Analysis Dashboard</h1>
+
+        <p>
+            Mathematical and Statistical Analysis of Student Performance
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <div class="navigation">
+
+        <a href="/" class="back-button">
+            ← Back to Prediction
+        </a>
+
+    </div>
+
+
+    <!-- =========================================
+         DATASET OVERVIEW
+    ========================================== -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>👨‍🎓 Students</h3>
+
+            <div class="value">
+                1000
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📋 Columns</h3>
+
+            <div class="value">
+                9
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>❌ Missing Values</h3>
+
+            <div class="value">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🔁 Duplicates</h3>
+
+            <div class="value">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         STATISTICAL ANALYSIS
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>📈 Statistical Analysis</h2>
+
+        <table>
+
+            <tr>
+
+                <th>Measure</th>
+
+                <th>Math Score</th>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Mean</td>
+
+                <td>66.089</td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Median</td>
+
+                <td>66</td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Variance</td>
+
+                <td>229.919</td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Standard Deviation</td>
+
+                <td>15.163</td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Minimum</td>
+
+                <td>0</td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Maximum</td>
+
+                <td>100</td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <!-- =========================================
+         FEATURE IMPACT
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>🔍 Feature Impact Analysis</h2>
+
+        <table>
+
+            <tr>
+
+                <th>Numerical Feature</th>
+
+                <th>Correlation with Math Score</th>
+
+                <th>Relationship</th>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Reading Score</td>
+
+                <td>0.818</td>
+
+                <td>Strong Positive</td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Writing Score</td>
+
+                <td>0.803</td>
+
+                <td>Strong Positive</td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <!-- =========================================
+         CATEGORICAL FEATURE ANALYSIS
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>🧩 Categorical Feature Analysis</h2>
+
+        <div class="two-column">
+
+
+            <div class="probability-box">
+
+                <strong>Gender</strong>
+
+                <br><br>
+
+                Female: 63.63
+
+                <br>
+
+                Male: 68.73
+
+            </div>
+
+
+            <div class="probability-box">
+
+                <strong>Lunch</strong>
+
+                <br><br>
+
+                Free/Reduced: 58.92
+
+                <br>
+
+                Standard: 70.03
+
+            </div>
+
+
+            <div class="probability-box">
+
+                <strong>Test Preparation</strong>
+
+                <br><br>
+
+                Completed: 69.70
+
+                <br>
+
+                None: 64.08
+
+            </div>
+
+
+            <div class="probability-box">
+
+                <strong>Parental Education</strong>
+
+                <br><br>
+
+                High School: 62.14
+
+                <br>
+
+                Master's Degree: 69.75
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         PROBABILITY DISTRIBUTION
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>🎲 Probability Distribution Analysis</h2>
+
+
+        <div class="probability-box">
+
+            <div class="probability-row">
+
+                <strong>
+                    Probability of students scoring between
+                    50 and 70
+                </strong>
+
+                <span>
+                    47.4%
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    Normal Distribution Probability
+                </strong>
+
+                <span>
+                    45.74%
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    Pass Probability
+                </strong>
+
+                <span>
+                    0.96 (96%)
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    P(X = 4) for 5 Students
+                </strong>
+
+                <span>
+                    16.99%
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    P(X = 5) for 5 Students
+                </strong>
+
+                <span>
+                    81.54%
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         REGRESSION
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>📐 Regression & Least Squares</h2>
+
+
+        <div class="regression-box">
+
+            <div class="regression-equation">
+
+                Math Score =
+                7.524
+                +
+                0.601 × Reading Score
+                +
+                0.249 × Writing Score
+
+            </div>
+
+
+            <div class="regression-description">
+
+                The model uses the least-squares method
+                to estimate Math Score from Reading and
+                Writing Scores.
+
+            </div>
+
+        </div>
+
+
+        <div class="cards" style="margin-top: 20px; margin-bottom: 0;">
+
+            <div class="card">
+
+                <h3>R² Score</h3>
+
+                <div class="value">
+                    0.674
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>MAE</h3>
+
+                <div class="value">
+                    7.05
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>RMSE</h3>
+
+                <div class="value">
+                    8.653
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         DATA VISUALIZATIONS
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>📊 Data Visualizations</h2>
+
+
+        <div class="graphs">
+
+    <!-- Math Distribution -->
+    <div class="graph">
+        <h3>Math Score Distribution</h3>
+
+        <img
+            src="/graphs/math_score_distribution.png"
+            alt="Math Score Distribution"
+        >
+    </div>
+
+
+    <!-- Reading vs Math -->
+    <div class="graph">
+        <h3>Reading Score vs Math Score</h3>
+
+        <img
+            src="/graphs/reading_vs_math.png"
+            alt="Reading vs Math"
+        >
+    </div>
+
+
+    <!-- Writing vs Math -->
+    <div class="graph">
+        <h3>Writing Score vs Math Score</h3>
+
+        <img
+            src="/graphs/writing_vs_math.png"
+            alt="Writing vs Math"
+        >
+    </div>
+
+
+    <!-- Gender Comparison -->
+    <div class="graph">
+        <h3>Gender Comparison</h3>
+
+        <img
+            src="/graphs/gender_comparison.png"
+            alt="Gender Comparison"
+        >
+    </div>
+
+</div>
+
+
+    <!-- =========================================
+         MATHEMATICAL ANALYSIS
+    ========================================== -->
+
+    <div class="section">
+
+        <h2>📐 Mathematical Analysis</h2>
+
+
+        <!-- Statistical Measures -->
+
+        <div class="analysis-grid">
+
+
+            <div class="analysis-card">
+
+                <h3>
+                    Mean
+                </h3>
+
+                <div class="analysis-value">
+                    66.089
+                </div>
+
+                <p>
+                    Average Math Score
+                </p>
+
+            </div>
+
+
+            <div class="analysis-card">
+
+                <h3>
+                    Median
+                </h3>
+
+                <div class="analysis-value">
+                    66
+                </div>
+
+                <p>
+                    Middle Math Score
+                </p>
+
+            </div>
+
+
+            <div class="analysis-card">
+
+                <h3>
+                    Variance
+                </h3>
+
+                <div class="analysis-value">
+                    229.919
+                </div>
+
+                <p>
+                    Score Variability
+                </p>
+
+            </div>
+
+
+            <div class="analysis-card">
+
+                <h3>
+                    Standard Deviation
+                </h3>
+
+                <div class="analysis-value">
+                    15.163
+                </div>
+
+                <p>
+                    Spread of Math Scores
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Probability Analysis -->
+
+        <h3 class="sub-analysis-title">
+            📊 Probability Analysis
+        </h3>
+
+
+        <div class="probability-box">
+
+
+            <div class="probability-row">
+
+                <strong>
+                    P(50 ≤ Math Score ≤ 70)
+                </strong>
+
+                <span>
+                    47.4%
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    Pass Probability
+                </strong>
+
+                <span>
+                    0.96 (96%)
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    P(X = 4) for 5 Students
+                </strong>
+
+                <span>
+                    16.99%
+                </span>
+
+            </div>
+
+
+            <div class="probability-row">
+
+                <strong>
+                    P(X = 5) for 5 Students
+                </strong>
+
+                <span>
+                    81.54%
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Correlation Analysis -->
+
+        <h3 class="sub-analysis-title">
+            🔗 Correlation Analysis
+        </h3>
+
+
+        <div class="correlation-table">
+
+
+            <div class="table-row table-header">
+
+                <div>
+                    Feature
+                </div>
+
+                <div>
+                    Pearson Correlation (r)
+                </div>
+
+                <div>
+                    Interpretation
+                </div>
+
+            </div>
+
+
+            <div class="table-row">
+
+                <div>
+                    Reading Score
+                </div>
+
+                <div>
+                    0.818
+                </div>
+
+                <div>
+                    Strong Positive
+                </div>
+
+            </div>
+
+
+            <div class="table-row">
+
+                <div>
+                    Writing Score
+                </div>
+
+                <div>
+                    0.803
+                </div>
+
+                <div>
+                    Strong Positive
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Regression Equation -->
+
+        <h3 class="sub-analysis-title">
+            📈 Regression Equation
+        </h3>
+
+
+        <div class="regression-box">
+
+
+            <p class="regression-equation">
+
+                <strong>Math Score</strong>
+
+                =
+
+                7.524
+
+                +
+
+                0.601 × Reading Score
+
+                +
+
+                0.249 × Writing Score
+
+            </p>
+
+
+            <p class="regression-description">
+
+                The model uses the least-squares method
+                to estimate Math Score from Reading and
+                Writing Scores.
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <div class="footer">
+
+        Student Performance Analysis & Prediction System
+
+        <br><br>
+
+        Probability • Statistics • Correlation • Regression • Machine Learning
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>
